@@ -1,75 +1,98 @@
-import React, { Component } from 'react';
-import axios from 'axios';
 import '../assets/css/main.css'
-export default class PersonList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            searchQuery: '',
-            filteredItems: props.items,
-            persons: []
-        };
-    }
-    handleSearch = (event) => {
-        const query = event.target.value;
-        let filteredPersons = [];
-        if (this.state.persons) {
-            filteredPersons = this.state.persons.filter((person) => {
-                return person.name.toLowerCase().includes(query.toLowerCase());
-            });
-        }
-        this.setState({
-            searchQuery: query,
-            filteredPersons: filteredPersons
-        });
-    }
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-    componentDidMount() {
-        axios.get(`https://api.jikan.moe/v4/characters?page=0&limit=15&q=saki&order_by=fav`)
-            .then(res => {
-                const persons = res.data.data;
-                this.setState({ persons });
-            })
-    }
+// const API_URL = 'https://jsonplaceholder.typicode.com/users';
+const API_URL = 'https://api.jikan.moe/v4/characters?page=0&limit=242&q=saki&order_by=fav';
 
-    render() {
-        return (
-            <div>
-                <form className="inputSearchbar" action="" >
-                    <button type="submit"><i class="fa fa-search"></i></button>
-                    <input className='searchArea' type="text" placeholder="Search.." name="search2" />
-                </form>
-                <div className='matchingData' style={{ fontSize: "10px" }}>Total 225 matching anime characters found</div>
+const Search = () => {
+    const [data, setData] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [perPage] = useState(15);;
 
-                {
-                    this.state.persons.map(person =>
-                        <div className='indexItem'>
-                            <table>
-                                <tbody>
-                                    <tr className='profileSection'>
-                                        <th className='profileSectionIndex'>
-                                            <div className='profileInfo'>
-                                                <div className='profileImg'>
-                                                    <img className='proImg' src={person.images.webp.image_url} title={person.name} />
-                                                </div>
-                                                <div className='profileName'>
-                                                    <div className='profileTitleName'>{person.name}</div>
-                                                    <div className='profileNickName'>
-                                                        <span className='nicknameTitle'>{person.nicknames}</span>
-                                                    </div>
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        const response = await axios.get(API_URL);
+        setData(response.data.data);
+    };
+
+    const filteredData = data.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const indexOfLastItem = currentPage * perPage;
+    const indexOfFirstItem = indexOfLastItem - perPage;
+    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+    const totalPages = Math.ceil(filteredData.length / perPage);
+
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage(currentPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        setCurrentPage(currentPage - 1);
+    };
+
+
+    return (
+        <div>
+            <form className="inputSearchbar" action="" >
+                <button type="submit"><i class="fa fa-search"></i></button>
+                <input className='searchArea' type="text" placeholder="Search.." name="search2"
+                    value={searchTerm}
+                    onChange={handleSearch} />
+            </form>
+            <div className='matchingData' style={{ fontSize: "10px" }}>Total <span style={{ padding: "20px 0", fontWeight: "bold", fontSize: "18px" }}> {filteredData.length} </span> matching anime characters found</div>
+
+            {
+                currentItems.map(person =>
+                    <div className='indexItem'>
+                        <table>
+                            <tbody>
+                                <tr className='profileSection'>
+                                    <th className='profileSectionIndex'>
+                                        <div className='profileInfo'>
+                                            <div className='profileImg'>
+                                                <img className='proImg' src={person.images.webp.image_url} title={person.name} />
+                                            </div>
+                                            <div className='profileName'>
+                                                <div className='profileTitleName'>{person.name}</div>
+                                                <div className='profileNickName'>
+                                                    <span className='nicknameTitle'>{person.nicknames}</span>
                                                 </div>
                                             </div>
-                                            <div className='profileLike'>&hearts; <span className='profileLikeTitle'>2222</span></div>
-                                        </th>
-                                        <th className='profileArrow'>&rarr;</th>
+                                        </div>
+                                        <div className='profileLike'>&hearts; <span className='profileLikeTitle'>{person.favorites}</span></div>
+                                    </th>
+                                    <th className='profileArrow'>&rarr;</th>
 
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    )
-                }
-            </div>
-        )
-    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                )
+            }
+
+            <span style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {currentPage > 1 && (
+                    <button onClick={handlePrevPage}>Prev</button>
+                )}
+                {/* <span>{currentPage}</span> */}
+                {currentPage < totalPages && (
+                    <button onClick={handleNextPage}>Next</button>
+                )}
+            </span>
+        </div>
+    )
 }
+
+export default Search;

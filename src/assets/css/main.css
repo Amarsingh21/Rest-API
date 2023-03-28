@@ -16,7 +16,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 50px 0;
+  margin: 20px 0;
 }
 
 form {
@@ -89,7 +89,7 @@ tr {
   display: flex;
   border: 1px solid gray;
   justify-content: space-between;
-  margin: 20px 0 0 0;
+  margin: 0px 0 0 0;
 }
 .profileSectionIndex {
   width: 500px;
