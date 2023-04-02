@@ -5,9 +5,8 @@
   box-sizing: border-box;
   font-family: "Fira Sans", sans-serif;
 }
-body,
-html {
-  background-color: lightgray;
+a {
+  text-decoration: none;
 }
 .headerTitle,
 .matchingData {
@@ -141,7 +140,12 @@ tr {
   font-size: 13px;
   padding: 0 0 0 10px;
 }
+.profileArrow,
+a {
+  color: #a407ff;
+}
 .profileArrow {
+  color: #a407ff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,4 +155,33 @@ tr {
   border-left: 1px solid gray;
   height: 70px;
   padding: 0 10px;
+}
+.profileArrow,
+a:hover {
+  color: #07ff34;
+  font-size: 45px;
+  max-zoom: initial;
+}
+
+.tittleArrow {
+  animation: shake 2s ease infinite;
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-10px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(10px);
+  }
 }
