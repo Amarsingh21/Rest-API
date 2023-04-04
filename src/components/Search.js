@@ -47,8 +47,7 @@ const Search = () => {
                 <button type="submit"><i class="fa fa-search"></i></button>
                 <input className='searchArea' type="text" placeholder="Search.." name="search2"
                     value={searchTerm}
-                    onChange=
-                    {handleSearch}
+                    onChange={handleSearch}
                 />
             </form>
             <div className='matchingData' style={{ fontSize: "10px" }}>Total <span style={{ padding: "20px 0", fontWeight: "bold", fontSize: "18px" }}> {filteredData.length} </span> matching anime characters found</div>
